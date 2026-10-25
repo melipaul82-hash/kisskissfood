@@ -8,7 +8,7 @@ Le même projet contient le webhook du bot WhatsApp (`/api/whatsapp`).
 
 - Next.js 15 (App Router), TypeScript, React Three Fiber pour la 3D
 - Supabase pour les demandes du formulaire et les messages WhatsApp
-- Hébergement Vercel, domaine `kisskissfood.site`
+- Hébergement Vercel, domaine `kisskissfood.org`
 
 ## Lancer en local
 
@@ -31,7 +31,7 @@ Toutes les tables ont la sécurité RLS activée : la clé publique peut lire le
 
 ## Espace admin
 
-`https://kisskissfood.site/admin`, connexion par e-mail et mot de passe.
+`https://kisskissfood.org/admin`, connexion par e-mail et mot de passe.
 Pour créer un accès : Supabase → Authentication → Users → Add user → Create new user (cocher « Auto Confirm User »),
 avec un e-mail présent dans la table `admin_emails`. Pour ajouter un administrateur :
 

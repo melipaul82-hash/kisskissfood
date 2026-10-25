@@ -17,7 +17,7 @@ export default async function WhatsAppPage() {
         <div className="empty">
           <p>
             Aucun message pour l’instant. Ils arriveront ici quand le numéro WhatsApp Business sera relié au site
-            (adresse du webhook : <code>https://kisskissfood.site/api/whatsapp</code>).
+            (adresse du webhook : <code>https://kisskissfood.org/api/whatsapp</code>).
           </p>
         </div>
       ) : (

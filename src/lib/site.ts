@@ -4,7 +4,7 @@
  */
 export const site = {
   name: "Kiss Kiss Food",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://kisskissfood.site",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://kisskissfood.org",
   owner: "Meli Paul",
   street: "Rostocker Str. 41",
   postalCode: "70376",
