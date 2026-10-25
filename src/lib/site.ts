@@ -12,18 +12,19 @@ export const site = {
   country: "Deutschland",
   // Address shown on the brand material. Make sure this mailbox exists on the domain you use.
   email: "info@kisskissfood.com",
-  phone: "",
+  phone: "+49 152 16725059",
   // Legal details still to be completed (Impressum): leave empty until known.
   legalForm: "", // e.g. "Einzelunternehmen"
   vatId: "", // USt-IdNr., if any
   register: "", // Handelsregister entry, if any
   socials: {
-    tiktok: "",
-    instagram: "",
-    facebook: "",
+    tiktok: "https://www.tiktok.com/@kisskissfood",
+    instagram: "https://www.instagram.com/foodkisskiss/",
+    facebook: "https://www.facebook.com/share/18J9JgPTtr/",
     linkedin: "",
   },
-  whatsappNumber: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
+  // Business number. Customers reach it on WhatsApp; it can later be moved to the WhatsApp Business API for the bot.
+  whatsappNumber: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "4915216725059").replace(/\D/g, ""),
 } as const;
 
 /** Link that opens a WhatsApp chat with a prefilled message, or null if no number is configured yet. */

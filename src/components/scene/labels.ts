@@ -125,3 +125,64 @@ export async function makeLabelTexture(kind: LabelKind, name: string, wide: bool
   tex.anisotropy = 8;
   return tex;
 }
+
+/**
+ * Printed packaging panel: brand colour, the logo, and an optional line of text.
+ * `panels` repeats the artwork side by side, for boxes whose sides share one texture.
+ */
+export async function makeBrandPanel(opts: {
+  bg: string;
+  accent?: string;
+  caption?: string;
+  captionColor?: string;
+  panels?: number;
+  width?: number;
+  height?: number;
+  logoScale?: number;
+}) {
+  await fontsReady();
+  const logo = await loadLogo().catch(() => null);
+  const panels = opts.panels ?? 1;
+  const PW = opts.width ?? 512;
+  const H = opts.height ?? 512;
+  const canvas = document.createElement("canvas");
+  canvas.width = PW * panels;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = opts.bg;
+  ctx.fillRect(0, 0, canvas.width, H);
+
+  for (let p = 0; p < panels; p++) {
+    const x0 = p * PW;
+    if (opts.accent) {
+      ctx.fillStyle = opts.accent;
+      ctx.fillRect(x0, H - H * 0.07, PW, H * 0.07);
+      ctx.beginPath();
+      ctx.ellipse(x0 + PW * 0.12, H * 0.14, PW * 0.025, PW * 0.04, 0.5, 0, Math.PI * 2);
+      ctx.ellipse(x0 + PW * 0.88, H * 0.2, PW * 0.02, PW * 0.032, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (logo) {
+      const lh = H * (opts.logoScale ?? 0.62);
+      const lw = (logo.width / logo.height) * lh;
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.22)";
+      ctx.shadowBlur = H * 0.03;
+      ctx.shadowOffsetY = H * 0.012;
+      ctx.drawImage(logo, x0 + (PW - lw) / 2, opts.caption ? H * 0.08 : (H - lh) / 2, lw, lh);
+      ctx.restore();
+    }
+    if (opts.caption) {
+      ctx.fillStyle = opts.captionColor ?? "#4a230c";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      fitText(ctx, opts.caption, PW * 0.86, Math.round(H * 0.11));
+      ctx.fillText(opts.caption, x0 + PW / 2, H * 0.83);
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}

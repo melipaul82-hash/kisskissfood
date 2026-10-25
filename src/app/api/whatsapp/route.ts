@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL } from "@/lib/supabase/config";
 
 /**
  * WhatsApp Cloud API webhook.
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     return new Response("Bad request", { status: 400 });
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
     console.error("WhatsApp webhook: Supabase server key missing");

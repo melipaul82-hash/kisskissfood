@@ -7,12 +7,19 @@ import { LogoStory } from "@/components/LogoStory";
 import { RangeShelfLoader } from "@/components/RangeShelfLoader";
 import { getDictionary } from "@/i18n";
 import { isLocale } from "@/i18n/config";
+import { getMenu, getProducts } from "@/lib/catalog";
 import { site, whatsappLink } from "@/lib/site";
+import { DeliverySceneLoader } from "@/components/DeliverySceneLoader";
+
+// Products and menu are read from Supabase; the page is rebuilt at most every 5 minutes, or right away after a change in /admin.
+export const revalidate = 300;
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const t = getDictionary(lang);
+  const [products, menu] = await Promise.all([getProducts(lang, t), getMenu(lang, t)]);
+  const nameOf = (key: string, i: number) => products.find((p) => p.key === key)?.name || t.ranges.items[i].name;
 
   const orderLink = whatsappLink(t.whatsappMessages.order);
   const generalLink = whatsappLink(t.whatsappMessages.general);
@@ -150,16 +157,16 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <RangeShelfLoader
               label={t.scene.shelf}
               names={{
-                cristal: t.ranges.items[0].name,
-                spices: t.ranges.items[1].name,
-                chips: t.ranges.items[2].name,
-                drinks: t.ranges.items[3].name,
+                cristal: nameOf("cristal", 0),
+                spices: nameOf("spices", 1),
+                chips: nameOf("chips", 2),
+                drinks: nameOf("drinks", 3),
               }}
             />
             <p className="shelf-hint">{t.scene.shelfHint}</p>
           </div>
           <ul className="ranges" role="list">
-            {t.ranges.items.map((r) => (
+            {products.map((r) => (
               <li key={r.key} className={`range range-${r.key}`}>
                 <span className={`badge ${r.available ? "badge-live" : ""}`}>
                   {r.available ? t.ranges.available : t.ranges.soon}
@@ -185,28 +192,16 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <p>{t.restaurant.body}</p>
           </div>
           <div className="resto-gallery">
-            <figure className="resto-main">
-              <Image
-                src="/brand/concept-restaurant.jpg"
-                alt={t.restaurant.altInterior}
-                width={1376}
-                height={768}
-                sizes="(max-width: 900px) 100vw, 64vw"
+            <div className="resto-scene">
+              <DeliverySceneLoader
+                label={t.restaurant.sceneLabel}
+                labels={{ burger: "Afro Burger", jollof: "Jollof Rice", beignets: "Beignets Cristal", bissap: "Bissap" }}
               />
-            </figure>
-            <figure className="resto-side">
-              <Image
-                src="/brand/concept-borne.jpg"
-                alt={t.restaurant.altKiosk}
-                width={1400}
-                height={781}
-                sizes="(max-width: 900px) 100vw, 34vw"
-              />
-            </figure>
+            </div>
             <div className="menu-board">
               <h3>{t.restaurant.menuTitle}</h3>
               <ul role="list">
-                {t.restaurant.menu.map((m) => (
+                {menu.map((m) => (
                   <li key={m.name}>
                     <strong>{m.name}</strong>
                     <span>{m.text}</span>

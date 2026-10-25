@@ -14,7 +14,7 @@ function lump(x: number, y: number, z: number, seed: number) {
   );
 }
 
-function makeBeignetGeometry(seed: number) {
+export function makeBeignetGeometry(seed: number) {
   const geo = new THREE.IcosahedronGeometry(1, 24);
   const pos = geo.attributes.position as THREE.BufferAttribute;
   const colors = new Float32Array(pos.count * 3);
@@ -41,7 +41,7 @@ function makeBeignetGeometry(seed: number) {
 }
 
 /** Fine crust bump texture, generated once on the client. */
-function makeCrustTexture() {
+export function makeCrustTexture() {
   const size = 256;
   const data = new Uint8Array(size * size * 4);
   for (let i = 0; i < size * size; i++) {

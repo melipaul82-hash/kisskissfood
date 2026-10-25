@@ -18,20 +18,36 @@ cp .env.example .env.local   # puis remplir les valeurs
 npm run dev                  # http://localhost:3000
 ```
 
+## Supabase (projet « kiss kiss »)
+
+La base est déjà créée. Le schéma de référence est dans `supabase/migrations/`.
+
+- `products` et `menu_items` : textes affichés sur le site, modifiables dans `/admin`.
+- `leads` : demandes envoyées par le formulaire.
+- `admin_emails` : e-mails autorisés dans `/admin`.
+- `wa_contacts`, `wa_messages` : messages WhatsApp reçus par le bot.
+
+Toutes les tables ont la sécurité RLS activée : la clé publique peut lire les produits et le menu, et envoyer une demande. Rien d'autre.
+
+## Espace admin
+
+`https://kisskissfood.site/admin`, connexion par e-mail et mot de passe.
+Pour créer un accès : Supabase → Authentication → Users → Add user → Create new user (cocher « Auto Confirm User »),
+avec un e-mail présent dans la table `admin_emails`. Pour ajouter un administrateur :
+
+```sql
+insert into public.admin_emails (email) values ('prenom@exemple.com');
+```
+
 ## Mise en ligne
 
-1. **Supabase** (projet `kiss kiss`) : SQL Editor → coller et exécuter `supabase/migrations/0001_leads.sql`,
-   puis `0002_whatsapp.sql`.
-2. **Vercel** : importer ce dépôt, puis dans Settings → Environment Variables ajouter les clés de `.env.example`.
-3. **Domaine** : Vercel → Settings → Domains → ajouter `kisskissfood.site` et `www.kisskissfood.site`,
-   puis copier les enregistrements DNS indiqués chez le registrar du domaine.
+Vercel (compte de Kiss Kiss Food) déploie automatiquement à chaque envoi sur la branche `main`.
+Les variables d'environnement sont listées dans `.env.example`.
 
 ## Ce qui reste à compléter
 
-- `src/lib/site.ts` : forme juridique, USt-IdNr., téléphone, liens des réseaux sociaux.
-- `NEXT_PUBLIC_WHATSAPP_NUMBER` : le numéro WhatsApp Business dédié, quand il existe.
-  Tant qu'il est vide, les boutons « Commander » mènent à la section contact.
-- Les demandes envoyées par le formulaire se lisent dans Supabase → Table Editor → `leads`.
+- `src/lib/site.ts` : forme juridique et USt-IdNr. pour l'Impressum.
+- Pour le bot : `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` dans Vercel.
 
-Les maquettes d'emballage ne sont pas reproduites telles quelles : la boîte 3D et les étiquettes
-n'affichent ni tableau nutritionnel, ni code-barres, ni allégation santé.
+Les emballages et produits en 3D sont dessinés dans le code avec le vrai logo : ni tableau nutritionnel,
+ni code-barres, ni allégation santé.

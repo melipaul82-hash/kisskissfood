@@ -67,7 +67,8 @@ const de: Dictionary = {
   },
   restaurant: {
     title: "Morgen: afrikanisches Fast Food",
-    body: "Unser Ziel: Afrikanische Küche so einfach bestellen wie einen Burger. Mit Theke, Bestellterminals, einem Team in den Farben der Marke und einem Signature-Menü.",
+    body: "Unser Ziel: afrikanische Küche so einfach bestellen wie einen Burger. Jedes Gericht kommt in seiner Kiss-Kiss-Food-Box, bereit zum Liefern oder Mitnehmen.",
+    sceneLabel: "Gerichte der Signature-Karte in Kiss-Kiss-Food-Boxen, in 3D: Afro Burger, Jollof Rice, Beignets Cristal und Bissap",
     menuTitle: "Das geplante Signature-Menü",
     menu: [
       { name: "Afro Burgers", text: "Mit scharfem Hähnchen oder Rind." },
@@ -82,9 +83,7 @@ const de: Dictionary = {
       { name: "Wachsen", text: "Weitere Standorte, in Europa und darüber hinaus." },
     ],
     stepsTitle: "Die Etappen",
-    concept: "Konzeptbilder. Das Restaurant ist noch nicht eröffnet.",
-    altInterior: "Innenraum-Konzept des Kiss-Kiss-Food-Restaurants mit Theke und digitalen Menüs",
-    altKiosk: "Konzept eines Kiss-Kiss-Food-Bestellterminals mit Touchscreen",
+    concept: "Verpackungen als 3D-Entwurf. Das Restaurant ist noch nicht eröffnet.",
   },
   find: {
     title: "Wo du uns findest",

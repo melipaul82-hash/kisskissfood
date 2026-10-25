@@ -20,6 +20,7 @@ export function Footer({ lang, t }: { lang: Locale; t: Dictionary }) {
           <span>
             {site.postalCode} {site.city}
           </span>
+          <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>
           <a href={`mailto:${site.email}`}>{site.email}</a>
         </address>
         <nav className="footer-links" aria-label={t.footer.legal}>

@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { publicClient } from "@/lib/supabase/public";
 import { isLocale } from "@/i18n/config";
 
 export type LeadState = { status: "idle" | "success" | "error" | "invalid" };
@@ -32,14 +32,7 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
     return { status: "invalid" };
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) {
-    console.error("Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY");
-    return { status: "error" };
-  }
-
-  const supabase = createClient(url, key, { auth: { persistSession: false } });
+  const supabase = publicClient();
   const { error } = await supabase.from("leads").insert(lead);
   if (error) {
     console.error("Lead insert failed", error.message);

@@ -67,7 +67,8 @@ const en: Dictionary = {
   },
   restaurant: {
     title: "Tomorrow: African fast food",
-    body: "Our plan: make African food as easy to order as a burger. A counter, ordering kiosks, a team in the brand’s colours, and a signature menu.",
+    body: "Our plan: make African food as easy to order as a burger. Every dish leaves in its own Kiss Kiss Food box, ready for delivery or takeaway.",
+    sceneLabel: "Signature menu dishes in Kiss Kiss Food boxes, in 3D: Afro Burger, Jollof rice, Cristal beignets and bissap",
     menuTitle: "The planned signature menu",
     menu: [
       { name: "Afro Burgers", text: "Spicy chicken or beef." },
@@ -82,9 +83,7 @@ const en: Dictionary = {
       { name: "Grow", text: "More locations, in Europe and beyond." },
     ],
     stepsTitle: "The steps",
-    concept: "Concept visuals. The restaurant is not open yet.",
-    altInterior: "Interior concept of the Kiss Kiss Food restaurant with counter and digital menus",
-    altKiosk: "Concept of a Kiss Kiss Food touchscreen ordering kiosk",
+    concept: "Packaging concept in 3D. The restaurant is not open yet.",
   },
   find: {
     title: "Where to find us",

@@ -754,22 +754,23 @@ p {
 /* Restaurant */
 .resto-gallery {
   display: grid;
-  grid-template-columns: 1.85fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1.9fr 1fr;
   gap: 16px;
+  align-items: center;
 }
-.resto-gallery figure {
-  margin: 0;
+.resto-scene {
+  position: relative;
   border-radius: var(--radius-l);
+  background:
+    radial-gradient(70% 60% at 50% 70%, rgba(252, 194, 0, 0.35), transparent 70%),
+    var(--dough-2);
   overflow: hidden;
 }
-.resto-gallery img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.delivery-canvas {
+  height: clamp(340px, 38vw, 540px);
 }
-.resto-main {
-  grid-row: span 2;
+.delivery-canvas canvas {
+  touch-action: pan-y;
 }
 .menu-board {
   border-radius: var(--radius-l);
@@ -1190,9 +1191,6 @@ body:has(.legal) .lang-switch a:not([aria-current="true"]) {
   .resto-gallery {
     grid-template-columns: 1fr;
   }
-  .resto-main {
-    grid-row: auto;
-  }
   .find-base {
     grid-column: 1;
   }
@@ -1248,6 +1246,9 @@ body:has(.legal) .lang-switch a:not([aria-current="true"]) {
 }
 
 @media (max-width: 760px) {
+  .delivery-canvas {
+    height: min(78vw, 360px);
+  }
   .shelf-canvas {
     height: min(118vw, 520px);
   }

@@ -65,7 +65,8 @@ const fr = {
   },
   restaurant: {
     title: "Demain, un fast food africain",
-    body: "Notre projet : rendre la cuisine africaine aussi simple à commander qu’un burger. Comptoir, bornes de commande, une équipe aux couleurs de la marque, et un menu signature.",
+    body: "Notre projet : rendre la cuisine africaine aussi simple à commander qu’un burger. Chaque plat part dans sa boîte Kiss Kiss Food, prêt à être livré ou emporté.",
+    sceneLabel: "Les plats du menu signature livrés dans les boîtes Kiss Kiss Food, en 3D : Afro Burger, Jollof rice, beignets Cristal et bissap",
     menuTitle: "Le menu signature imaginé",
     menu: [
       { name: "Afro Burgers", text: "Poulet épicé ou bœuf." },
@@ -80,9 +81,7 @@ const fr = {
       { name: "Grandir", text: "D’autres adresses, en Europe puis au-delà." },
     ],
     stepsTitle: "Les étapes",
-    concept: "Visuels de concept. Le restaurant n’est pas encore ouvert.",
-    altInterior: "Concept d’intérieur du restaurant Kiss Kiss Food avec comptoir et menus numériques",
-    altKiosk: "Concept de borne de commande tactile Kiss Kiss Food",
+    concept: "Emballages imaginés, en 3D. Le restaurant n’est pas encore ouvert.",
   },
   find: {
     title: "Où nous trouver",
