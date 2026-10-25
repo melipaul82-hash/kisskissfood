@@ -1,74 +1,97 @@
+import Link from "next/link";
 import { serverClient } from "@/lib/supabase/server";
-import { deleteLead, setLeadStatus } from "../actions";
 
-const STATUS: Record<string, string> = { new: "Nouvelle", in_progress: "En cours", done: "Traitée" };
-const KIND: Record<string, string> = { reseller: "Revendeur", contact: "Question" };
+const fmt = (d: string) =>
+  new Date(d).toLocaleString("fr-DE", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Berlin" });
 
-export default async function LeadsPage() {
+export default async function Overview() {
   const supabase = await serverClient();
-  const { data: leads, error } = await supabase
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const since = new Date(Date.now() - 7 * 864e5).toISOString();
+  const head = { count: "exact" as const, head: true };
+  const [newL, weekL, allL, prods, menu, wa, recent] = await Promise.all([
+    supabase.from("leads").select("id", head).eq("status", "new"),
+    supabase.from("leads").select("id", head).gte("created_at", since),
+    supabase.from("leads").select("id", head),
+    supabase.from("products").select("key, name, available, visible").order("sort"),
+    supabase.from("menu_items").select("key", head).eq("visible", true),
+    supabase.from("wa_contacts").select("wa_id", head),
+    supabase.from("leads").select("id, created_at, kind, name, shop_name, status").order("created_at", { ascending: false }).limit(5),
+  ]);
+  const products = prods.data ?? [];
+  const onSale = products.filter((p) => p.available).length;
+
+  const stats = [
+    { label: "Demandes à traiter", value: newL.count ?? 0, href: "/admin/demandes?statut=new", hot: (newL.count ?? 0) > 0 },
+    { label: "Demandes cette semaine", value: weekL.count ?? 0, href: "/admin/demandes" },
+    { label: "Produits en vente", value: `${onSale} / ${products.length}`, href: "/admin/produits" },
+    { label: "Plats au menu", value: menu.count ?? 0, href: "/admin/menu" },
+    { label: "Clients WhatsApp", value: wa.count ?? 0, href: "/admin/whatsapp" },
+  ];
 
   return (
     <>
       <div className="page-head">
-        <h1>Demandes reçues</h1>
-        <p>Les messages envoyés par le formulaire du site, les plus récents en premier.</p>
+        <h1>Tableau de bord</h1>
+        <p>Les chiffres viennent directement de la base Supabase de Kiss Kiss Food.</p>
       </div>
-      {error && <p className="form-error">Impossible de charger les demandes : {error.message}</p>}
-      {!leads?.length ? (
-        <div className="empty">
-          <p>Aucune demande pour l’instant. Elles apparaîtront ici dès qu’un visiteur remplit le formulaire.</p>
-        </div>
-      ) : (
-        <ul className="cards" role="list">
-          {leads.map((l) => (
-            <li key={l.id} className={`card lead lead-${l.status}`}>
-              <div className="lead-top">
-                <span className="tag">{KIND[l.kind] ?? l.kind}</span>
-                <span className="tag tag-soft">{l.locale.toUpperCase()}</span>
-                <time dateTime={l.created_at}>
-                  {new Date(l.created_at).toLocaleString("fr-DE", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Berlin" })}
-                </time>
-              </div>
-              <h2>
-                {l.name}
-                {l.shop_name ? ` · ${l.shop_name}` : ""}
-              </h2>
-              <p className="lead-contact">
-                <a href={`mailto:${l.email}`}>{l.email}</a>
-                {l.phone && <a href={`tel:${l.phone}`}>{l.phone}</a>}
-                {l.city && <span>{l.city}</span>}
-                {l.volume && <span>Volume : {l.volume}</span>}
-              </p>
-              {l.message && <p className="lead-msg">{l.message}</p>}
-              <div className="lead-actions">
-                <form action={setLeadStatus} className="inline">
-                  <input type="hidden" name="id" value={l.id} />
-                  <label>
-                    <span className="sr-only">Statut</span>
-                    <select name="status" defaultValue={l.status}>
-                      {Object.entries(STATUS).map(([v, label]) => (
-                        <option key={v} value={v}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button className="a-btn a-btn-ghost">Mettre à jour</button>
-                </form>
-                <form action={deleteLead}>
-                  <input type="hidden" name="id" value={l.id} />
-                  <button className="a-btn a-btn-danger">Supprimer</button>
-                </form>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <ul className="stats" role="list">
+        {stats.map((s) => (
+          <li key={s.label}>
+            <Link href={s.href} className={`stat ${s.hot ? "stat-hot" : ""}`}>
+              <strong>{s.value}</strong>
+              <span>{s.label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <div className="grid-2">
+        <section className="card">
+          <div className="card-head">
+            <h2>Dernières demandes</h2>
+            <Link href="/admin/demandes">Tout voir</Link>
+          </div>
+          {!recent.data?.length ? (
+            <p className="muted">Aucune demande pour l’instant. Elles arrivent ici dès qu’un visiteur remplit le formulaire du site.</p>
+          ) : (
+            <ul className="mini-list" role="list">
+              {recent.data.map((l) => (
+                <li key={l.id}>
+                  <span className={`dot dot-${l.status}`} aria-hidden="true" />
+                  <div>
+                    <strong>{l.shop_name || l.name}</strong>
+                    <span className="muted">
+                      {l.kind === "reseller" ? "Revendeur" : "Question"} · {fmt(l.created_at)}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="muted small-note">Total depuis le lancement : {allL.count ?? 0}</p>
+        </section>
+
+        <section className="card">
+          <div className="card-head">
+            <h2>Gamme sur le site</h2>
+            <Link href="/admin/produits">Modifier</Link>
+          </div>
+          <ul className="mini-list" role="list">
+            {products.map((p) => (
+              <li key={p.key}>
+                <span className={`dot ${p.available ? "dot-done" : "dot-wait"}`} aria-hidden="true" />
+                <div>
+                  <strong>{(p.name as Record<string, string>).fr}</strong>
+                  <span className="muted">
+                    {!p.visible ? "Masqué du site" : p.available ? "Disponible" : "Bientôt"}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </>
   );
 }

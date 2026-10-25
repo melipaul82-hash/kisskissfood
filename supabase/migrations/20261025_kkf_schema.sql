@@ -107,3 +107,11 @@ alter table public.wa_contacts enable row level security;
 alter table public.wa_messages enable row level security;
 create policy "Admins read contacts" on public.wa_contacts for select to authenticated using ((select private.is_admin()));
 create policy "Admins read messages" on public.wa_messages for select to authenticated using ((select private.is_admin()));
+
+-- Admin team management (from /admin/equipe)
+create policy "Admins add admins" on public.admin_emails
+  for insert to authenticated with check ((select private.is_admin()));
+create policy "Admins remove other admins" on public.admin_emails
+  for delete to authenticated using (
+    (select private.is_admin()) and email <> lower(coalesce(auth.jwt() ->> 'email', ''))
+  );

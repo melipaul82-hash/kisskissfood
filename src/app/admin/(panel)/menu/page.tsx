@@ -1,4 +1,6 @@
 import { serverClient } from "@/lib/supabase/server";
+import { SubmitButton } from "../SubmitButton";
+import { ConfirmButton } from "../ConfirmButton";
 import { addMenuItem, deleteMenuItem, saveMenuItem } from "../../actions";
 
 const LANGS = [
@@ -44,12 +46,12 @@ export default async function MenuPage() {
                   <span>Ordre</span>
                   <input name="sort" type="number" defaultValue={m.sort} min={0} max={9999} />
                 </label>
-                <button className="a-btn a-btn-primary">Enregistrer</button>
+                <SubmitButton>Enregistrer</SubmitButton>
               </div>
             </form>
             <form action={deleteMenuItem} className="card-delete">
               <input type="hidden" name="key" value={m.key} />
-              <button className="a-btn a-btn-danger">Supprimer ce plat</button>
+              <ConfirmButton message="Supprimer ce plat du menu ?">Supprimer ce plat</ConfirmButton>
             </form>
           </li>
         ))}
@@ -69,7 +71,7 @@ export default async function MenuPage() {
               ))}
             </div>
             <div className="row">
-              <button className="a-btn a-btn-primary">Ajouter le plat</button>
+              <SubmitButton pending="Ajout…">Ajouter le plat</SubmitButton>
             </div>
           </form>
         </li>

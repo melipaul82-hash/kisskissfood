@@ -1,4 +1,5 @@
 import { serverClient } from "@/lib/supabase/server";
+import { SubmitButton } from "../SubmitButton";
 import { saveProduct } from "../../actions";
 
 const LANGS = [
@@ -54,7 +55,7 @@ export default async function ProductsPage() {
                   <span>Ordre</span>
                   <input name="sort" type="number" defaultValue={p.sort} min={0} max={9999} />
                 </label>
-                <button className="a-btn a-btn-primary">Enregistrer</button>
+                <SubmitButton>Enregistrer</SubmitButton>
               </div>
             </form>
           </li>

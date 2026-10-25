@@ -1,17 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { serverClient } from "@/lib/supabase/server";
 import { logout } from "../actions";
+import { Flash } from "./Flash";
+import { SideNav } from "./SideNav";
 
 export const dynamic = "force-dynamic";
-
-const NAV = [
-  { href: "/admin", label: "Demandes" },
-  { href: "/admin/produits", label: "Produits" },
-  { href: "/admin/menu", label: "Menu restaurant" },
-  { href: "/admin/whatsapp", label: "WhatsApp" },
-];
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const supabase = await serverClient();
@@ -21,44 +16,47 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   if (!user) redirect("/admin/login");
 
   // The admin list is only readable by admins, so an empty answer means "not an admin".
-  const { data: admins } = await supabase.from("admin_emails").select("email").limit(1);
+  const [{ data: admins }, { count: newLeads }] = await Promise.all([
+    supabase.from("admin_emails").select("email").limit(1),
+    supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "new"),
+  ]);
   const isAdmin = !!admins?.length;
 
   return (
-    <div className="panel">
-      <header className="panel-head">
-        <Link href="/admin" className="panel-brand">
-          <Image src="/brand/logo-sm.png" alt="" width={44} height={43} />
-          <span>Admin</span>
-        </Link>
-        {isAdmin && (
-          <nav aria-label="Admin">
-            {NAV.map((n) => (
-              <Link key={n.href} href={n.href}>
-                {n.label}
-              </Link>
-            ))}
-          </nav>
-        )}
-        <div className="panel-user">
-          <span>{user.email}</span>
-          <a href="/" target="_blank" rel="noopener noreferrer">
+    <div className="shell">
+      <aside className="side">
+        <div className="side-brand">
+          <Image src="/brand/logo-sm.png" alt="" width={48} height={47} />
+          <div>
+            <strong>Kiss Kiss Food</strong>
+            <span>Administration</span>
+          </div>
+        </div>
+        {isAdmin && <SideNav newLeads={newLeads ?? 0} />}
+        <div className="side-foot">
+          <a className="side-link" href="/" target="_blank" rel="noopener noreferrer">
             Voir le site
           </a>
+          <span className="side-user" title={user.email}>
+            {user.email}
+          </span>
           <form action={logout}>
-            <button className="a-btn a-btn-ghost">Se déconnecter</button>
+            <button className="a-btn a-btn-ghost a-btn-block">Se déconnecter</button>
           </form>
         </div>
-      </header>
+      </aside>
       <main className="panel-main">
+        <Suspense>
+          <Flash />
+        </Suspense>
         {isAdmin ? (
           children
         ) : (
           <div className="empty">
             <h1>Accès réservé</h1>
             <p>
-              Le compte {user.email} n’a pas les droits d’administration. Demandez à être ajouté à la liste des
-              administrateurs.
+              Le compte {user.email} n’a pas les droits d’administration. Un administrateur peut vous ajouter depuis la
+              page Équipe.
             </p>
           </div>
         )}
